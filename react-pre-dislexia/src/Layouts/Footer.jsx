@@ -43,7 +43,7 @@ export default function Footer() {
         <hr className="my-6 border-gray-200" />
 
         {/* Footer End */}
-        <div className="text-center text-sm text-white">
+        <div className="text-center text-sm text-gray">
           <p>
             Desarrollado por Aguilar J., Daza S. y González E. <br />
             I.T.S de Tepexi de Rodríguez
