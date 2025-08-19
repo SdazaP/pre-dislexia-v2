@@ -1,1 +1,4 @@
 @import "tailwindcss";
+.root{
+    font-family: 'Rubik Variable', sans-serif;
+}

@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 
 export default function Footer() {
   return (
-    <footer className="bg-white text-gray-700 py-8">
+    <footer className="bg-blue-400 sm:bg-white text-white sm:text-gray-700 py-8 text-lg">
       <div className="container mx-auto px-4">
         {/* Footer Head */}
         <div className="flex flex-col md:flex-row items-center justify-center sm:gap-30 mb-8">
@@ -14,7 +14,7 @@ export default function Footer() {
             />
           </div>
           <div className="text-center md:max-w-lg">
-            <h1 className="text-4xl font-semibold">
+            <h1 className="text-4xl font-bold">
               Pre-Diagnóstico de Dislexia en niños de 1ro y 2do grado de primaria
             </h1>
           </div>
@@ -24,7 +24,7 @@ export default function Footer() {
         <div className="flex flex-col lg:flex-row justify-between gap-10 sm:gap-32 mb-8">
           <div className="lg:w-1/2">
             <h4 className="text-lg font-medium mb-4">Nuestra Misión</h4>
-            <p className="text-gray-600 text-justify">
+            <p className="text-justify">
               Brindar un diagnóstico temprano y preciso de dislexia en niños, permitiendo una intervención oportuna que facilite su proceso de aprendizaje y mejore su calidad de vida.
             </p>
           </div>
@@ -43,7 +43,7 @@ export default function Footer() {
         <hr className="my-6 border-gray-200" />
 
         {/* Footer End */}
-        <div className="text-center text-sm text-gray-500">
+        <div className="text-center text-sm text-white">
           <p>
             Desarrollado por Aguilar J., Daza S. y González E. <br />
             I.T.S de Tepexi de Rodríguez
@@ -62,7 +62,7 @@ function FooterLink({ to, children }) {
         to={to}
         className={({ isActive }) =>
           `hover:text-blue-600 transition-colors ${
-            isActive ? 'text-blue-600 font-medium' : 'text-gray-600'
+            isActive ? 'text-black sm:text-blue-600 font-medium' : 'sm:text-gray-40'
           }`
         }
       >
