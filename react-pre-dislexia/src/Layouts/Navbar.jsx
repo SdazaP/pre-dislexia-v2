@@ -82,8 +82,8 @@ function NavItem({ to, children, exact = false }) {
         to={to}
         exact={exact}
         className={({ isActive }) =>
-          `block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-50 ${
-            isActive ? 'text-blue-600 font-medium' : ''
+          `block px-3 py-2 rounded-md  hover:text-blue-500 hover:bg-gray-50 ${
+            isActive ? 'text-blue-500 font-medium' : ''
           }`
         }
       >

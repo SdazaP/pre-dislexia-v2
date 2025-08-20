@@ -24,10 +24,10 @@ const Home = () => {
             />
           </div>
           <div className="md:w-2/3 flex flex-col justify-center my-10">
-            <h1 className="text-4xl font-bold text-gray-800 mb-4 text-center">
+            <h1 className="text-4xl font-bold mb-4 text-center">
               ¿Qué es la Dislexia?
             </h1>
-            <p className="text-gray-700 text-justify mb-4">
+            <p className="text-lg md:text-xl text-justify mb-4">
               Es una dificultad de aprendizaje que se manifiesta en dificultades
               de acceso al léxico, y puede estar causada por una combinación de
               déficit en el procesamiento fonológico, auditivo, y/o visual.
@@ -66,7 +66,7 @@ const Home = () => {
               <h3 className="text-4xl font-bold text-center mb-4">
                 Causas de la Dislexia
               </h3>
-              <p className="text-blue-100 text-justify">
+              <p className="text-blue-100 text-justify text-lg md:text-xl">
                 Los niños nacen con dislexia, pero la sintomatología comienza a
                 manifestarse cuando entra en la escuela, la mayoría de los
                 especialistas establece la clasificación después de los siete u
@@ -87,7 +87,7 @@ const Home = () => {
               <h3 className="text-4xl font-bold text-center mb-4">
                 Consecuencias de la Dislexia
               </h3>
-              <ul className="list-disc pl-5 text-blue-100 space-y-2">
+              <ul className="list-disc pl-5 text-blue-100 space-y-2 text-lg md:text-xl">
                 <li>Desinterés por el estudio</li>
                 <li>Calificaciones escolares bajas</li>
                 <li>Marginados del grupo</li>
@@ -101,10 +101,10 @@ const Home = () => {
       <section className="container mx-auto mt-12 px-4 text-lg">
         <div className="flex flex-col md:flex-row gap-8 items-center">
           <div className="md:w-1/2">
-            <h1 className="text-4xl font-bold text-gray-800 mb-6">
+            <h1 className="text-4xl font-bold mb-6">
               Mitos sobre la Dislexia
             </h1>
-            <ul className="list-disc pl-5 space-y-3 text-gray-700 mb-4">
+            <ul className="list-disc pl-5 space-y-3 mb-4 text-lg md:text-xl">
               <li>Es una enfermedad que se cura con el tratamiento adecuado</li>
               <li>La dislexia no se manifiesta hasta los siete años</li>
               <li>Un mal hábito de lectura puede provocar la dislexia</li>
@@ -113,7 +113,7 @@ const Home = () => {
               </li>
               <li>Los niños bilingües no pueden tener dislexia</li>
             </ul>
-            <p className="text-gray-500 italic">(Artiz, 2020)</p>
+            <p className="italic">(Artiz, 2020)</p>
           </div>
           <div className="md:w-1/2 flex justify-center">
             <img
@@ -126,8 +126,8 @@ const Home = () => {
       </section>
 
       <section className="container mx-auto mt-12 px-4 mb-12 text-lg">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4 text-center">Referencias</h1>
-        <ul className="list-disc pl-5 space-y-3 text-gray-700">
+        <h1 className="text-4xl font-bold mb-4 text-center">Referencias</h1>
+        <ul className="list-disc pl-5 space-y-3">
           <li>
             ASANDIS. (2017).
             https://www.disfam.org/wp-content/uploads/2017/03/guia-general-sobre-dislexia-andalucia.pdf
