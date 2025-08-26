@@ -43,10 +43,10 @@ export default function Acerca() {
         <section className="container mx-auto px-4 mb-16">
           <div className="flex flex-col lg:flex-row gap-8 items-center">
             <div className="lg:w-2/3">
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+              <h1 className="text-4xl md:text-5xl font-bold mb-6">
                 Acerca de <span className="text-blue-500">Nosotros</span>
               </h1>
-              <p className="text-lg md:text-xl text-gray-600 leading-relaxed mb-6 text-justify">
+              <p className="text-lg md:text-xl leading-relaxed mb-6 text-justify">
                 Somos un proyecto dedicado a proporcionar herramientas y
                 recursos para el pre-diagnóstico de dislexia en niños de 1º y 2º
                 grado de primaria. Nuestro objetivo es identificar posibles
@@ -61,7 +61,7 @@ export default function Acerca() {
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-2xl">📧</span>
                 </div>
-                <h4 className="text-xl font-semibold text-gray-800 mb-4">
+                <h4 className="text-xl font-semibold mb-4">
                   ¡Contáctate con Nosotros!
                 </h4>
                 <button
@@ -83,8 +83,8 @@ export default function Acerca() {
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
                 <span className="text-xl">👁️</span>
               </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Visión</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="text-2xl font-bold mb-4">Visión</h3>
+              <p className="leading-relaxed">
                 Ser un referente en la detección temprana de la dislexia,
                 contribuyendo al desarrollo educativo de los niños y a la
                 creación de estrategias efectivas de enseñanza inclusiva.
@@ -96,8 +96,8 @@ export default function Acerca() {
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                 <span className="text-xl">🎯</span>
               </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Misión</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <h3 className="text-2xl font-bold mb-4">Misión</h3>
+              <p className="leading-relaxed">
                 Brindar un diagnóstico temprano y preciso de dislexia en niños,
                 permitiendo una intervención oportuna que facilite su proceso de
                 aprendizaje y mejore su calidad de vida.
@@ -110,10 +110,10 @@ export default function Acerca() {
         <section className="container mx-auto px-4">
           <div className="bg-white  p-8">
             <div className="text-center mb-8">
-              <h3 className="text-3xl font-bold text-gray-800 mb-4">
+              <h3 className="text-3xl font-bold mb-4">
                 Nuestros Valores
               </h3>
-              <p className="text-gray-600 max-w-2xl mx-auto">
+              <p className="max-w-2xl mx-auto">
                 Los principios que guían nuestro trabajo y compromiso con la
                 comunidad educativa
               </p>

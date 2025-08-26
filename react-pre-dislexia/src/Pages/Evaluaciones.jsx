@@ -64,7 +64,7 @@ export default function Evaluaciones() {
         {/* Sección de Introducción */}
         <section className="container mx-auto px-4 mb-16">
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl font-bold mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">
               Evaluaciones
             </h1>
             <p className="text-lg md:text-xl leading-relaxed text-justify">

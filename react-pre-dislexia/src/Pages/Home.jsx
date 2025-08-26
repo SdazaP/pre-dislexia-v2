@@ -24,7 +24,7 @@ const Home = () => {
             />
           </div>
           <div className="md:w-2/3 flex flex-col justify-center my-10">
-            <h1 className="text-4xl font-bold mb-4 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center">
               ¿Qué es la Dislexia?
             </h1>
             <p className="text-lg md:text-xl text-justify mb-4">
