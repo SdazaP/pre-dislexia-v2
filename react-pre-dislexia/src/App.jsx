@@ -8,6 +8,9 @@ import {
 import Home from "./Pages/Home";
 import Evaluaciones from "./Pages/Evaluaciones";
 import Acerca from "./Pages/Acerca";
+import ArticuloDislexia from "./Pages/ArticuloDislexia";
+import Contacto from "./Pages/Contacto";
+import CatalogoInstituciones from "./Pages/Instituciones";
 
 function App() {
   return (
@@ -16,6 +19,9 @@ function App() {
         <Route exact path="/" element={<Home/>}></Route>
         <Route exact path="/evaluaciones" element={<Evaluaciones/>}></Route>
         <Route exact path="/acerca-de" element={<Acerca/>}></Route>
+        <Route exact path="/articulo" element={<ArticuloDislexia/>}></Route>
+        <Route exact path="/contacto" element={<Contacto/>}></Route>
+        <Route exact path="/catalogo-instituciones" element={<CatalogoInstituciones/>}></Route>
       </Routes>
     </Router>
   );
