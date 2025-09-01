@@ -11,6 +11,7 @@ import Acerca from "./Pages/Acerca";
 import ArticuloDislexia from "./Pages/ArticuloDislexia";
 import Contacto from "./Pages/Contacto";
 import CatalogoInstituciones from "./Pages/Instituciones";
+import InicioPrueba from "./Pages/Pruebas/InicioPrueba";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route exact path="/articulo" element={<ArticuloDislexia/>}></Route>
         <Route exact path="/contacto" element={<Contacto/>}></Route>
         <Route exact path="/catalogo-instituciones" element={<CatalogoInstituciones/>}></Route>
+        <Route exact path="/inicio-prueba" element={<InicioPrueba/>}></Route>
       </Routes>
     </Router>
   );

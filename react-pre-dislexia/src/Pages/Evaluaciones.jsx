@@ -131,7 +131,7 @@ export default function Evaluaciones() {
                 completo que incluye todas las pruebas.
               </p>
               <Link
-                to="/prueba-registro"
+                to="/inicio-prueba"
                 className="inline-block bg-blue-500 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
                 Iniciar Evaluación Completa
