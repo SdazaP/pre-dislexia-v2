@@ -1,7 +1,7 @@
 import Layout from "../Layouts/Layout";
 import { Link } from "react-router-dom";
 import '@fontsource-variable/rubik';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 export default function Evaluaciones() {
   const evaluaciones = [
@@ -35,10 +35,26 @@ export default function Evaluaciones() {
     },
   ];
 
-  // Referencia para la sección de inicio de evaluación
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const carouselRef = useRef(null);
   const iniciarEvaluacionRef = useRef(null);
 
-  // Función para hacer scroll a la sección de iniciar evaluación
+  const nextSlide = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === evaluaciones.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === 0 ? evaluaciones.length - 1 : prevIndex - 1
+    );
+  };
+
+  const goToSlide = (index) => {
+    setCurrentIndex(index);
+  };
+
   const scrollToIniciarEvaluacion = () => {
     iniciarEvaluacionRef.current?.scrollIntoView({ 
       behavior: 'smooth',
@@ -52,7 +68,7 @@ export default function Evaluaciones() {
         {/* Botón Flotante */}
         <button
           onClick={scrollToIniciarEvaluacion}
-          className="fixed bottom-8 right-8 z-50 bg-blue-500 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-6 rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 flex items-center space-x-2"
+          className="fixed bottom-8 right-8 z-50 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-6 rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 flex items-center space-x-2"
           aria-label="Comenzar evaluación"
         >
           <span className="text-lg">Comenzar</span>
@@ -64,7 +80,7 @@ export default function Evaluaciones() {
         {/* Sección de Introducción */}
         <section className="container mx-auto px-4 mb-16">
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold mb-16">
               Evaluaciones
             </h1>
             <p className="text-lg md:text-xl leading-relaxed text-justify">
@@ -83,56 +99,121 @@ export default function Evaluaciones() {
           </div>
         </section>
 
-        {/* Sección de Tarjetas de Evaluación */}
+        {/* Carrusel de Evaluaciones */}
         <section className="container mx-auto px-4 mb-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {evaluaciones.map((evaluacion) => (
-              <div key={evaluacion.id} className="group">
-                <div className="bg-white rounded-2xl overflow-hidden transform transition-all duration-300 hover:scale-105">
-                  <div className="relative overflow-hidden">
-                    <img
-                      src={evaluacion.imagen}
-                      alt={evaluacion.titulo}
-                      className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
+          <div className="relative">
+            <div 
+              ref={carouselRef}
+              className="overflow-hidden relative"
+            >
+              <div 
+                className="flex transition-transform duration-500 ease-in-out"
+                style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+              >
+                {evaluaciones.map((evaluacion) => (
+                  <div 
+                    key={evaluacion.id} 
+                    className="w-full flex-shrink-0 px-4"
+                  >
+                    <div className="bg-white rounded-2xl shadow-xl overflow-hidden max-w-2xl mx-auto">
+                      <div className="relative overflow-hidden">
+                        <img
+                          src={evaluacion.imagen}
+                          alt={evaluacion.titulo}
+                          className="w-full h-72 object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                      </div>
 
-                  <div className="p-6">
-                    <h3 className="text-2xl font-bold mb-4">
-                      {evaluacion.titulo}
-                    </h3>
-                    <p className="leading-relaxed">
-                      {evaluacion.descripcion}
-                    </p>
+                      <div className="p-8">
+                        <h3 className="text-3xl font-bold text-gray-800 mb-4 text-center">
+                          {evaluacion.titulo}
+                        </h3>
+                        <p className="text-gray-600 leading-relaxed mb-6 text-center">
+                          {evaluacion.descripcion}
+                        </p>
 
-                    <div className="mt-4 flex items-center">
-                      <div className="w-4 h-4 bg-blue-500 rounded-full mr-2"></div>
-                      <span className="text-sm text-blue-600 font-medium">
-                        Habilidad evaluada: {evaluacion.habilidad}
-                      </span>
+                        <div className="flex items-center justify-center">
+                          <div className="w-4 h-4 bg-blue-500 rounded-full mr-3"></div>
+                          <span className="text-lg text-blue-600 font-medium">
+                            Habilidad evaluada: {evaluacion.habilidad}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
+            </div>
+
+            {/* Botones de Navegación */}
+            <button
+              onClick={prevSlide}
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 z-10"
+              aria-label="Evaluación anterior"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <button
+              onClick={nextSlide}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 z-10"
+              aria-label="Siguiente evaluación"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* Indicadores */}
+            <div className="flex justify-center space-x-2 mt-8">
+              {evaluaciones.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index === currentIndex 
+                      ? 'bg-blue-600 scale-125' 
+                      : 'bg-gray-300 hover:bg-gray-400'
+                  }`}
+                  aria-label={`Ir a evaluación ${index + 1}`}
+                />
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* Botón de Iniciar Evaluación - Con referencia */}
+        {/* Información del Carrusel */}
+        <section className="container mx-auto px-4 mb-16">
+          <div className="bg-blue-50 rounded-2xl p-8 text-center max-w-4xl mx-auto">
+            <h3 className="text-2xl font-bold text-gray-800 mb-4">
+              ¿Cómo funciona el proceso?
+            </h3>
+            <p className="text-gray-600">
+              Desliza para ver las diferentes pruebas disponibles. Cada evaluación 
+              está diseñada para medir habilidades específicas relacionadas con la 
+              dislexia. Al completar todas las pruebas, recibirás un pre-diagnóstico 
+              completo con recomendaciones.
+            </p>
+          </div>
+        </section>
+
+        {/* Botón de Iniciar Evaluación */}
         <section ref={iniciarEvaluacionRef} className="container mx-auto px-4">
           <div className="text-center">
             <div className="bg-white p-8 max-w-2xl mx-auto rounded-2xl shadow-lg">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
                 ¿Listo para comenzar?
               </h2>
-              <p className="mb-6">
+              <p className="text-gray-600 mb-6">
                 Selecciona esta opción para iniciar el proceso de evaluación
                 completo que incluye todas las pruebas.
               </p>
               <Link
                 to="/inicio-prueba"
-                className="inline-block bg-blue-500 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                className="inline-block bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
                 Iniciar Evaluación Completa
               </Link>
@@ -146,11 +227,11 @@ export default function Evaluaciones() {
 
         {/* Información adicional */}
         <section className="container mx-auto px-4 mt-16">
-          <div className="bg-blue-50 rounded-2xl p-8 text-center">
-            <h3 className="text-2xl font-bold mb-4">
+          <div className="bg-blue-50 rounded-2xl p-8 text-center max-w-4xl mx-auto">
+            <h3 className="text-2xl font-bold text-gray-800 mb-4">
               Importante
             </h3>
-            <p>
+            <p className="text-gray-600">
               Estas evaluaciones son una herramienta de detección temprana y no
               sustituyen un diagnóstico profesional. Si los resultados indican
               posibles signos de dislexia, recomendamos consultar con un
