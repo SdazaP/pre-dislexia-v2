@@ -5,6 +5,8 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import ScrollToTop from './components/ScrollToTop';
+
 import Home from "./Pages/Home";
 import Evaluaciones from "./Pages/Evaluaciones";
 import Acerca from "./Pages/Acerca";
@@ -16,6 +18,7 @@ import InicioPrueba from "./Pages/Pruebas/InicioPrueba";
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         <Route exact path="/" element={<Home/>}></Route>
         <Route exact path="/evaluaciones" element={<Evaluaciones/>}></Route>
