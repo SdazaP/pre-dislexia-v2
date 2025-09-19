@@ -3,7 +3,7 @@ dotenv.config();
 const express = require('express');
 const path = require('path');
 const app = express();
-
+const mongoose = require('mongoose');
 
 // Configuración de Servidor
 const PORT = process.env.PORT;
@@ -21,6 +21,10 @@ app.use(express.json());
 app.use(cors());
 
 //Base de datos
+// connect db
+mongoose.connect(process.env.MONGOOSEDB_URL).then(()=>console.log("db connected")).then((err)=>{
+    err
+});
 
 
 // Ruta de prueba
@@ -31,3 +35,7 @@ app.get('/prueba', (req, res) => {
 //Ruta formulario
 const contactoRoutes = require("./routes/Contacto");
 app.use("/api/contacto", contactoRoutes);
+
+//Ruta Instituciones
+const Institucion = require("./routes/Institucion")
+app.use('/api/instituciones', Institucion)
