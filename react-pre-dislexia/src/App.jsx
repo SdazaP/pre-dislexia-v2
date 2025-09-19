@@ -13,7 +13,8 @@ import Acerca from "./Pages/Acerca";
 import ArticuloDislexia from "./Pages/ArticuloDislexia";
 import Contacto from "./Pages/Contacto";
 import CatalogoInstituciones from "./Pages/Instituciones";
-import InicioPrueba from "./Pages/Pruebas/InicioPrueba";
+import PreInicio from "./Pages/Pruebas/PreInicio";
+import Registro from "./Pages/Pruebas/Registro";
 
 function App() {
   return (
@@ -26,7 +27,8 @@ function App() {
         <Route exact path="/articulo" element={<ArticuloDislexia/>}></Route>
         <Route exact path="/contacto" element={<Contacto/>}></Route>
         <Route exact path="/catalogo-instituciones" element={<CatalogoInstituciones/>}></Route>
-        <Route exact path="/inicio-prueba" element={<InicioPrueba/>}></Route>
+        <Route exact path="/evaluacion/registro" element={<Registro/>}></Route>
+        <Route path="/evaluacion/pre-inicio" element={<PreInicio/>} />
       </Routes>
     </Router>
   );
