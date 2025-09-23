@@ -15,6 +15,10 @@ import Contacto from "./Pages/Contacto";
 import CatalogoInstituciones from "./Pages/Instituciones";
 import PreInicio from "./Pages/Pruebas/PreInicio";
 import Registro from "./Pages/Pruebas/Registro";
+import PalabraImagen from "./Pages/Pruebas/PalabraImagen";
+import CompletaPalabra from "./Pages/Pruebas/CompletaPalabra";
+import PatronFiguras from "./Pages/Pruebas/PatronFiguras";
+import CuestionarioPadres from "./Pages/Pruebas/CuestionarioPadres";
 
 function App() {
   return (
@@ -29,6 +33,11 @@ function App() {
         <Route exact path="/catalogo-instituciones" element={<CatalogoInstituciones/>}></Route>
         <Route exact path="/evaluacion/registro" element={<Registro/>}></Route>
         <Route path="/evaluacion/pre-inicio" element={<PreInicio/>} />
+        
+        <Route path="/evaluacion/palabra-imagen" element={<PalabraImagen/>} />
+        <Route path="/evaluacion/completa-palabra" element={<CompletaPalabra/>} />
+        <Route path="/evaluacion/patron-figuras" element={<PatronFiguras/>} />
+        <Route path="/evaluacion/cuestionario-padres" element={<CuestionarioPadres/>} />
       </Routes>
     </Router>
   );
