@@ -2,3 +2,8 @@
 .root{
     font-family: 'Rubik Variable', sans-serif;
 }
+
+.force-print-desktop {
+    width: 1024px !important; /* Un ancho fijo para simular una pantalla grande */
+    max-width: 1024px !important;
+}

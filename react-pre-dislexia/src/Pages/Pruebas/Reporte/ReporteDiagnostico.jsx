@@ -28,69 +28,79 @@ const reporteDePrueba = {
 };
 
 export default function ReporteDiagnostico() {
-    // Referencias a cada sección del reporte
-    const headerRef = useRef(null);
-    const patientDataRef = useRef(null);
-    const testBatteryRef = useRef(null);
-    const testBatteryDescriptionRef = useRef(null);
-    const resultsRef = useRef(null);
-    const diagnosisRef = useRef(null);
-    
+    const reportRef = useRef(null);
     const reporte = reporteDePrueba;
 
     const handleDownloadPDF = async () => {
-        const pdf = new jsPDF('p', 'mm', 'a3');
-        const margin = 10;
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        let yOffset = margin;
+    const reportElement = reportRef.current;
+    if (!reportElement) {
+        console.error("No se encontró la referencia al contenido del reporte.");
+        return;
+    }
 
-        const sections = [
-            headerRef,
-            patientDataRef,
-            testBatteryRef,
-            testBatteryDescriptionRef,
-            resultsRef,
-        ];
+    // 1. Agrega la clase para forzar el estilo de escritorio
+    reportElement.classList.add('force-print-desktop');
 
-        // Función para agregar secciones de manera dinámica
-        for (const ref of sections) {
-            if (ref.current) {
-                const canvas = await html2canvas(ref.current, { scale: 3, useCORS: true, allowTaint: true });
-                const imgData = canvas.toDataURL('image/png');
-                const imgWidth = pdfWidth - margin * 2;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    const canvas = await html2canvas(reportElement, {
+        scale: 3, 
+        useCORS: true,
+        allowTaint: true,
+    });
 
-                if (yOffset + imgHeight + margin > pdf.internal.pageSize.getHeight() && yOffset > margin) {
-                    pdf.addPage();
-                    yOffset = margin;
-                }
-                
-                pdf.addImage(imgData, 'PNG', margin, yOffset, imgWidth, imgHeight);
-                yOffset += imgHeight + margin;
-            }
+    // 2. Quita la clase inmediatamente después de la captura
+    reportElement.classList.remove('force-print-desktop');
+
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a3");
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const margin = 10;
+    const imgWidth = pdfWidth - margin * 2;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    let heightLeft = imgHeight;
+    let yPosition = 0;
+    const pages = Math.ceil(imgHeight / (pdfHeight - margin * 2));
+    let currentPage = 1;
+
+    while (heightLeft > 0) {
+        if (currentPage > 1) {
+            pdf.addPage();
         }
-        
-        // Añadir una nueva página para la sección de pre-diagnóstico
-        pdf.addPage();
-        if (diagnosisRef.current) {
-            const canvas = await html2canvas(diagnosisRef.current, { scale: 3, useCORS: true, allowTaint: true });
-            const imgData = canvas.toDataURL('image/png');
-            const imgWidth = pdfWidth - margin * 2;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
-        }
-        
-        const fileName = `reporte_${reporte.datosPaciente.nombre.replace(/\s/g, '_')}.pdf`;
-        pdf.save(fileName);
-    };
+
+        const sourceY = (currentPage - 1) * (pdfHeight - margin * 2);
+        const imgFragmentHeight = Math.min(heightLeft, pdfHeight - margin * 2);
+
+        pdf.addImage(
+            imgData,
+            "PNG",
+            margin,
+            margin,
+            imgWidth,
+            imgHeight,
+            null,
+            null,
+            null,
+            null,
+            sourceY,
+            imgFragmentHeight
+        );
+
+        heightLeft -= (pdfHeight - margin * 2);
+        currentPage++;
+    }
+
+    const fileName = `reporte_${reporte.datosPaciente.nombre.replace(/\s/g, "_")}.pdf`;
+    pdf.save(fileName);
+};
 
     return (
         <Layout>
             <div className="py-12 px-4 md:px-8 flex flex-col items-center">
-                <div className="bg-white rounded-xl shadow-2xl p-6 md:p-10 w-full max-w-4xl">
+                <div ref={reportRef} className="p-6 md:p-10 w-full max-w-4xl">
                     
                     {/* Encabezado del reporte */}
-                    <div ref={headerRef} className="flex items-center justify-center text-center space-x-4 mb-6 md:mb-10">
+                    <div className="flex items-center justify-center text-center space-x-4 mb-6 md:mb-10">
                         <img src="https://res.cloudinary.com/dmx716lyu/image/upload/v1755557481/Logo_ytl7br.png" alt="Logo de Dislexia Kids" className="w-20 md:w-24" />
                         <h2 className="text-xl md:text-2xl font-bold">
                             Dislexia Kids Pre-Diagnóstico de Dislexia en niños
@@ -101,7 +111,7 @@ export default function ReporteDiagnostico() {
                     
                     {/* Sección de Datos del Paciente */}
                     <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center">Impresión Diagnóstica</h1>
-                    <div ref={patientDataRef} className="mb-8 p-6 rounded-lg">
+                    <div className="mb-8 p-6 rounded-lg">
                         <h3 className="text-xl md:text-2xl font-semibold mb-4">Datos del Paciente</h3>
                         <p><strong>Nombre Completo:</strong> {reporte.datosPaciente.nombre}</p>
                         <p><strong>Edad:</strong> {reporte.datosPaciente.edad}</p>
@@ -109,7 +119,7 @@ export default function ReporteDiagnostico() {
                     </div>
 
                     {/* Sección de Batería de Pruebas */}
-                    <div ref={testBatteryRef} className="mb-8">
+                    <div className="mb-8">
                         <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Batería de Pruebas Realizadas</h3>
                         <p className="mb-4">
                             Para esta evaluación, se aplicó una batería de pruebas diseñadas para identificar posibles dificultades relacionadas con la dislexia en niños de 1º y 2º grado de primaria.
@@ -124,7 +134,7 @@ export default function ReporteDiagnostico() {
                     </div>
 
                     {/* Sección de Resultados */}
-                    <div ref={resultsRef} className="mb-8">
+                    <div className="mb-8">
                         <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Resultados de las Pruebas</h3>
                         <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-gray-200">
@@ -155,7 +165,7 @@ export default function ReporteDiagnostico() {
                     </div>
 
                     {/* Sección de Pre-Diagnóstico */}
-                    <div ref={diagnosisRef}>
+                    <div>
                         <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4">Pre-Diagnóstico</h3>
                         {reporte.diagnostico.resultadoFinal === "Sin síntomas de dislexia" ? (
                             <div className="p-6 bg-green-100 rounded-lg text-green-800">
