@@ -1,24 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Layout from "../Layouts/Layout";
 
 export default function CatalogoInstituciones() {
-  // Datos de ejemplo (reemplazar con datos reales de la API después)
-  const [instituciones] = useState([
-    {
-      id: 1,
-      nombre: "UBR de Tepexi de Rodríguez",
-      logo: "https://res.cloudinary.com/dmx716lyu/image/upload/v1755650879/ubr-tepexi_t61ujd.png",
-      descripcion:
-        "La UBR Tepexi de Rodríguez es una área asignada para la rehabilitación biopsicosocial, con el objetivo principal de brindar a los usuarios una atención con personal capacitado para una rehabilitación total o parcial, con un trato digno y humano.",
-      numero: "No disponible",
-      correo: "No disponible",
-      ubicacion:
-        "Av. Tecnológico 15, San Sebastián, 74690 Tepexi de Rodríguez, Pue.",
-      calificacion: 5.0,
-      opiniones: 3,
-    },
-    // Se pueden agregar más instituciones aquí
-  ]);
+  // Estado para almacenar las instituciones, el estado de carga y el estado de error
+  const [instituciones, setInstituciones] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Función asíncrona para obtener los datos de la API
+    const fetchInstituciones = async () => {
+      try {
+        // Realiza la llamada GET a tu endpoint
+        const response = await fetch('http://localhost:3000/api/instituciones');
+        
+        // Verifica si la respuesta es exitosa
+        if (!response.ok) {
+          throw new Error('Error al cargar los datos');
+        }
+        
+        const data = await response.json();
+        setInstituciones(data); // Actualiza el estado con los datos de la API
+        setLoading(false); // Desactiva el estado de carga
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setError(error.message); // Almacena el mensaje de error
+        setLoading(false); // Desactiva el estado de carga
+      }
+    };
+
+    fetchInstituciones(); // Llama a la función al montar el componente
+  }, []); // El array vacío [] asegura que se ejecute solo una vez
 
   return (
     <Layout>
@@ -36,23 +48,28 @@ export default function CatalogoInstituciones() {
 
           {/* Catálogo de Instituciones */}
           <div className="space-y-8">
-            {instituciones.length > 0 ? (
+            {loading ? (
+              <p className="text-center text-gray-600">Cargando instituciones...</p>
+            ) : error ? (
+              <p className="text-center text-red-600">Error al cargar el catálogo: {error}</p>
+            ) : instituciones.length > 0 ? (
               instituciones.map((institucion) => (
                 <div
-                  key={institucion.id}
-                  className="bg-white overflow-hidden"
+                  key={institucion._id}
+                  className="bg-white rounded-lg overflow-hidden"
                 >
-                  <div className="p-8">
+                  <div className="p-8 text-lg md:text-xl">
                     <div className="flex flex-col lg:flex-row gap-8">
+                      {/* Logo y Nombre */}
                       <div className="lg:w-1/4 text-center">
                         <div className="rounded-2xl p-6">
-                          <h3 className="text-xl font-bold  mb-4">
+                          <h3 className="text-xl font-bold mb-4">
                             {institucion.nombre}
                           </h3>
                           <img
-                            src={institucion.logo}
+                            src={institucion.imagen} 
                             alt={`Logo ${institucion.nombre}`}
-                            className="w-32 h-32 object-contain mx-auto mb-4 rounded-lg"
+                            className="h-full object-contain mx-auto mb-4 rounded-lg"
                           />
                         </div>
                       </div>
@@ -60,10 +77,10 @@ export default function CatalogoInstituciones() {
                       {/* Información y Contacto */}
                       <div className="lg:w-2/4">
                         <div className="mb-6">
-                          <h4 className="text-lg font-semibold mb-3">
+                          <h4 className="font-semibold mb-3">
                             Información
                           </h4>
-                          <p className="leading-relaxed">
+                          <p className="leading-relaxed text-justify">
                             {institucion.descripcion}
                           </p>
                         </div>
@@ -75,20 +92,16 @@ export default function CatalogoInstituciones() {
                           <div className="space-y-2">
                             <p>
                               <span className="font-medium">Tel:</span>{" "}
-                              {institucion.numero}
+                              {institucion.telefono}
                             </p>
                             <p>
                               <span className="font-medium">Email:</span>{" "}
-                              {institucion.correo !== "No disponible" ? (
-                                <a
-                                  href={`mailto:${institucion.correo}`}
-                                  className="text-blue-600 hover:text-blue-800"
-                                >
-                                  {institucion.correo}
-                                </a>
-                              ) : (
-                                <span>{institucion.correo}</span>
-                              )}
+                              <a
+                                href={`mailto:${institucion.correo}`}
+                                className="text-blue-600 hover:text-blue-800"
+                              >
+                                {institucion.correo} 
+                              </a>
                             </p>
                           </div>
                         </div>
@@ -100,6 +113,7 @@ export default function CatalogoInstituciones() {
                           <h4 className="text-lg font-semibold mb-4">
                             Ubicación
                           </h4>
+                          <div dangerouslySetInnerHTML={{ __html: institucion.ubicacion }} /> 
                         </div>
                       </div>
                     </div>
@@ -108,7 +122,7 @@ export default function CatalogoInstituciones() {
               ))
             ) : (
               <div className="text-center py-12">
-                <div className="bg-white rounded-2xl p-8">
+                <div className="bg-white rounded-2xl p-8 shadow-md">
                   <h3 className="text-2xl font-semibold text-gray-800 mb-4">
                     No hay instituciones disponibles
                   </h3>
