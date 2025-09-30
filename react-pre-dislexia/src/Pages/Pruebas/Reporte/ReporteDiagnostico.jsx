@@ -25,13 +25,54 @@ const mapCuestionarioToStars = (aciertos) => {
   return "★☆☆☆☆"; // 12-14 (Riesgo Severo)
 };
 
+// Modal de Confirmación
+const EmailSentModal = ({ isOpen, onClose, email }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-auto">
+        <div className="text-center">
+          {/* Ícono de éxito */}
+          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+            <svg className="h-10 w-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          
+          {/* Título y mensaje */}
+          <h3 className="text-2xl font-bold text-gray-800 mb-2">
+            ¡Correo Enviado!
+          </h3>
+          <p className="text-gray-600 mb-4">
+            El reporte ha sido enviado exitosamente a:
+          </p>
+          <p className="text-blue-600 font-semibold text-lg mb-6 break-all">
+            {email}
+          </p>
+          
+          {/* Botón de cerrar */}
+          <button
+            onClick={onClose}
+            className="w-full px-6 py-3 font-bold rounded-full text-white transition-all duration-300 bg-green-500 hover:bg-green-600 shadow-lg hover:shadow-xl"
+          >
+            Aceptar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function ReporteDiagnostico() {
-  // Obtiene el email de la URL (ruta: /reporte/:email)
   const { email } = useParams();
 
   const [reporte, setReporte] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sendingEmail, setSendingEmail] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const reportRef = useRef(null);
 
@@ -58,10 +99,11 @@ export default function ReporteDiagnostico() {
 
         const processedReporte = {
           // Datos básicos
-          nombre: "Usuario: " + rawData.email.split("@")[0], // Usamos alias/email de la URL
+          nombre: "Usuario: " + rawData.email.split("@")[0],
           fechaEvaluacion: new Date(rawData.fechaEvaluacion).toLocaleDateString(
             "es-MX"
           ),
+          email: rawData.email,
 
           // Resultados del Cuestionario (Prueba 1)
           cuestionario: {
@@ -111,7 +153,37 @@ export default function ReporteDiagnostico() {
     }
   }, [email]);
 
-  // Lógica de descarga de PDF (sin cambios en su cuerpo)
+  // Función para enviar el correo
+  const handleSendEmail = async () => {
+    if (!reporte?.email) return;
+
+    setSendingEmail(true);
+    try {
+      const response = await fetch('http://localhost:3000/api/pruebas/send-report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: reporte.email }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al enviar el correo');
+      }
+
+      setEmailSent(true);
+      setShowModal(true);
+      
+    } catch (error) {
+      console.error('Error enviando correo:', error);
+      alert(`Error al enviar el correo: ${error.message}`);
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
+  // Lógica de descarga de PDF
   const handleDownloadPDF = async () => {
     const reportElement = reportRef.current;
     if (!reportElement) {
@@ -223,6 +295,9 @@ export default function ReporteDiagnostico() {
             </h3>
             <p>
               <strong>Alias/Usuario:</strong> {reporte.nombre}
+            </p>
+            <p>
+              <strong>Correo electrónico:</strong> {reporte.email}
             </p>
             <p>
               <strong>Fecha de la Evaluación:</strong> {reporte.fechaEvaluacion}
@@ -374,16 +449,47 @@ export default function ReporteDiagnostico() {
           </div>
         </div>
 
-        {/* Botón de descarga */}
-        <div className="mt-8 text-center">
+        {/* Botones de acción */}
+        <div className="mt-8 text-center space-y-4 md:space-y-0 md:space-x-4 md:flex md:justify-center">
           <button
             onClick={handleDownloadPDF}
-            className="px-8 py-3 font-bold rounded-full text-white transition-all duration-300 bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl"
+            className="w-full md:w-auto px-8 py-3 font-bold rounded-full text-white transition-all duration-300 bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl"
           >
             Descargar Reporte PDF
           </button>
+          
+          <button
+            onClick={handleSendEmail}
+            disabled={sendingEmail || emailSent}
+            className={`w-full md:w-auto px-8 py-3 font-bold rounded-full text-white transition-all duration-300 shadow-lg hover:shadow-xl ${
+              sendingEmail || emailSent
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-green-600 hover:bg-green-700'
+            }`}
+          >
+            {sendingEmail ? (
+              <span className="flex items-center justify-center">
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Enviando...
+              </span>
+            ) : emailSent ? (
+              '✓ Correo Enviado'
+            ) : (
+              'Enviar por Correo'
+            )}
+          </button>
         </div>
       </div>
+
+      {/* Modal de confirmación */}
+      <EmailSentModal 
+        isOpen={showModal} 
+        onClose={() => setShowModal(false)} 
+        email={reporte.email} 
+      />
     </Layout>
   );
 }
