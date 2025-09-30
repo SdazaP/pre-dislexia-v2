@@ -70,7 +70,7 @@ function App() {
           />
 
 
-          <Route path="/evaluacion/reporte" element={<ReporteDiagnostico />} />
+          <Route path="/evaluacion/reporte/:email" element={<ReporteDiagnostico />} />
         </Routes>
       </Router>
     </DiagnosticoProvider>
