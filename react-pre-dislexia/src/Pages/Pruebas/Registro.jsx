@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../../Layouts/Layout";
+// 1. Importar el hook useDiagnostico
+import { useDiagnostico } from '../../context/context'; 
 
 export default function Registro() {
+  // 2. Obtener la función para actualizar datos de usuario
+  const { updateUserData } = useDiagnostico(); 
+  
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(true);
   const [formData, setFormData] = useState({
@@ -41,6 +46,12 @@ export default function Registro() {
   };
 
   const handleAcceptPrivacy = () => {
+    // 3. Guardar el email y el nombre (alias) en el contexto
+    updateUserData({ 
+      email: formData.email, 
+      userId: formData.nombre // Usamos el nombre como userId/Alias
+    });
+
     setShowPrivacyModal(false);
     navigate("/evaluacion/pre-inicio");
   };
@@ -66,8 +77,9 @@ export default function Registro() {
                   Antes de iniciar
                 </h1>
                 <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                  Por favor, ingresa tu nombre y correo para poder iniciar las
+                  Por favor, ingresa tu **alias** y **correo** para poder iniciar las
                   pruebas.
+                  <br />
                   <br />
                   Al finalizar se enviará un correo con tus resultados y los
                   términos aceptados.
@@ -163,7 +175,7 @@ export default function Registro() {
           </div>
         </div>
 
-        {/* Modal Inicio*/}
+        {/* Modal Inicio (sin cambios) */}
         {showInfoModal && (
           <div className="fixed inset-0 flex items-center justify-center p-4 bg-white text-lg">
             <div className="bg-white max-w-2xl w-full mx-4">
@@ -214,7 +226,7 @@ export default function Registro() {
           </div>
         )}
 
-        {/* Modal de Privacidad */}
+        {/* Modal de Privacidad (sin cambios) */}
         {showPrivacyModal && (
           <div className="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">

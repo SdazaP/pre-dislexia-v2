@@ -1,6 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDiagnostico } from "../../context/context";
 
 export default function CuestionarioPadres() {
+  const { updateResultados } = useDiagnostico();
+  const navigate = useNavigate();
+
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     reprobadoGrado: "",
@@ -13,18 +18,46 @@ export default function CuestionarioPadres() {
     preocupacionesComportamiento: [],
   });
 
+  // Función para validar el paso actual
+  const validateCurrentStep = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          formData.reprobadoGrado !== "" &&
+          formData.historialAprendizajeHabla !== "" &&
+          formData.historialDislexia !== "" &&
+          formData.capacidadAprender !== ""
+        );
+      
+      case 2:
+        const todasLasPreguntasHitosRespondidas = Array.from({ length: 8 }, (_, i) => i)
+          .every(index => formData.hitosDesarrollo[`${index}`] !== undefined);
+        return todasLasPreguntasHitosRespondidas;
+      
+      case 3:
+        return true;
+      
+      default:
+        return false;
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     if (type === "checkbox") {
-      setFormData((prevState) => ({
-        ...prevState,
-        [name]: checked
-          ? [...prevState[name], value]
-          : prevState[name].filter((item) => item !== value),
-      }));
+      setFormData((prevState) => {
+        const currentArray = prevState[name];
+        const newArray = checked
+          ? [...currentArray, value]
+          : currentArray.filter((item) => item !== value);
+        return {
+          ...prevState,
+          [name]: newArray,
+        };
+      });
     } else if (name.startsWith("hitosDesarrollo")) {
-      const preguntaKey = name.split('-')[1];
-      setFormData(prevState => ({
+      const preguntaKey = name.split("-")[1];
+      setFormData((prevState) => ({
         ...prevState,
         hitosDesarrollo: {
           ...prevState.hitosDesarrollo,
@@ -39,21 +72,59 @@ export default function CuestionarioPadres() {
     }
   };
 
+  const calculateAciertos = () => {
+    let aciertos = 0;
+
+    if (formData.reprobadoGrado === "Sí") aciertos += 1;
+    if (formData.historialAprendizajeHabla === "Sí") aciertos += 1;
+    if (formData.historialDislexia === "Sí") aciertos += 1;
+    if (formData.capacidadAprender === "Más lento") aciertos += 1;
+
+    if (formData.condicionesDiagnosticadas.length > 0) aciertos += 1;
+
+    Object.values(formData.hitosDesarrollo).forEach((respuesta) => {
+      if (respuesta === "Sí") aciertos += 1;
+    });
+
+    if (
+      formData.preocupacionesAcademicas.length > 0 ||
+      formData.preocupacionesComportamiento.length > 0
+    )
+      aciertos += 1;
+
+    return aciertos;
+  };
+
   const handleNext = () => {
+    if (!validateCurrentStep()) {
+      alert("Por favor, responde todas las preguntas requeridas antes de continuar.");
+      return;
+    }
+    
+    console.log(`Avanzando del paso ${currentStep} al paso ${currentStep + 1}`);
     setCurrentStep((prevStep) => prevStep + 1);
   };
 
   const handlePrevious = () => {
+    console.log(`Retrocediendo del paso ${currentStep} al paso ${currentStep - 1}`);
     setCurrentStep((prevStep) => prevStep - 1);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Datos del formulario recolectados:", formData);
-    alert("Formulario enviado. Revisa la consola para ver los datos.");
-    // Lógica para enviar a la API se implementará aquí después
+  const handleFinalSubmit = () => {
+    if (!validateCurrentStep()) {
+      alert("Por favor, completa todas las preguntas requeridas antes de finalizar.");
+      return;
+    }
+
+    const aciertos = calculateAciertos();
+    updateResultados("prueba1", aciertos);
+
+    console.log(`Cuestionario finalizado. Aciertos (Prueba 1): ${aciertos}`);
+    console.log("Datos del formulario:", formData);
+
+    navigate("/evaluacion/patron-figuras");
   };
-  
+
   const renderStep = () => {
     switch (currentStep) {
       case 1:
@@ -92,7 +163,7 @@ export default function CuestionarioPadres() {
                   </label>
                 </div>
               </div>
-              
+
               <div className="flex flex-col md:flex-row md:items-center md:space-x-4">
                 <label className="font-medium text-gray-700 md:w-1/2">
                   ¿Hay un historial familiar de dificultad del aprendizaje/habla?
@@ -122,7 +193,7 @@ export default function CuestionarioPadres() {
                   </label>
                 </div>
               </div>
-              
+
               <div className="flex flex-col md:flex-row md:items-center md:space-x-4">
                 <label className="font-medium text-gray-700 md:w-1/2">
                   ¿Hay un historial familiar de dislexia?
@@ -155,8 +226,8 @@ export default function CuestionarioPadres() {
 
               <div className="flex flex-col md:flex-row md:items-center md:space-x-4">
                 <label className="font-medium text-gray-700 md:w-1/2">
-                  ¿Cómo calificaría la capacidad de su hijo(a) para aprender nueva
-                  información en comparación con otros niños de la familia?
+                  ¿Cómo calificaría la capacidad de su hijo(a) para aprender
+                  nueva información en comparación con otros niños de la familia?
                 </label>
                 <div className="flex space-x-4 mt-2 md:mt-0">
                   <label className="inline-flex items-center">
@@ -204,8 +275,9 @@ export default function CuestionarioPadres() {
               Salud General y Hitos de Desarrollo
             </h2>
             <div className="border-t border-gray-200 pt-6 mt-6">
-              <p className="text-gray-600 mb-2">
-                ¿Su hijo(a) ha sido diagnosticado con alguna de las siguientes condiciones?
+              <p className="text-gray-600 mb-2 font-bold">
+                ¿Su hijo(a) ha sido diagnosticado con alguna de las siguientes
+                condiciones? (Marque todas las que apliquen)
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[
@@ -220,9 +292,7 @@ export default function CuestionarioPadres() {
                       type="checkbox"
                       name="condicionesDiagnosticadas"
                       value={condicion}
-                      checked={formData.condicionesDiagnosticadas.includes(
-                        condicion
-                      )}
+                      checked={formData.condicionesDiagnosticadas.includes(condicion)}
                       onChange={handleChange}
                       className="form-checkbox text-blue-600 rounded"
                     />
@@ -232,8 +302,8 @@ export default function CuestionarioPadres() {
               </div>
             </div>
             <div className="border-t border-gray-200 pt-6 mt-6">
-              <p className="text-gray-600 mb-2">
-                Marque la respuesta que mejor describa a su hijo(a).
+              <p className="text-gray-600 mb-2 font-bold">
+                Marque la respuesta que mejor describa a su hijo(a) en hitos de desarrollo.
               </p>
               <div className="space-y-4">
                 {[
@@ -332,9 +402,7 @@ export default function CuestionarioPadres() {
                         type="checkbox"
                         name="preocupacionesComportamiento"
                         value={area}
-                        checked={formData.preocupacionesComportamiento.includes(
-                          area
-                        )}
+                        checked={formData.preocupacionesComportamiento.includes(area)}
                         onChange={handleChange}
                         className="form-checkbox text-blue-600 rounded"
                       />
@@ -353,7 +421,7 @@ export default function CuestionarioPadres() {
 
   return (
     <div className="min-h-screen py-12 px-4 md:px-8 flex flex-col items-center justify-center text-lg">
-      <form onSubmit={handleSubmit} className="p-6 md:p-10 w-full max-w-4xl">
+      <div className="p-6 md:p-10 w-full max-w-4xl">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2 text-center">
           Cuestionario para Padres
         </h1>
@@ -361,7 +429,7 @@ export default function CuestionarioPadres() {
           Paso {currentStep} de 3
         </p>
 
-        <div className=" p-6 md:p-10 w-full max-w-4xl">
+        <div className="bg-white rounded-xl shadow-2xl p-6 md:p-10 w-full max-w-4xl">
           {renderStep()}
         </div>
 
@@ -386,14 +454,20 @@ export default function CuestionarioPadres() {
             </button>
           ) : (
             <button
-              type="submit"
+              type="button"
+              onClick={handleFinalSubmit}
               className="px-8 py-3 font-bold rounded-full text-white transition-all duration-300 bg-green-500 hover:bg-green-600 shadow-lg hover:shadow-xl"
             >
-              Enviar Respuestas
+              Finalizar Cuestionario
             </button>
           )}
         </div>
-      </form>
+
+        {/* Debug: Mostrar estado actual */}
+        <div className="mt-4 text-center text-sm text-gray-500">
+          Paso actual: {currentStep} | Validación: {validateCurrentStep() ? "✓" : "✗"}
+        </div>
+      </div>
     </div>
   );
 }

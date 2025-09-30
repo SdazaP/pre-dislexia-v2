@@ -8,7 +8,7 @@ export default function PreInicio() {
   const handleStartTest = () => {
     setIsStarting(true);
     setTimeout(() => {
-      navigate('/prueba/memorama');
+      navigate('/evaluacion/cuestionario-padres');
     }, 500);
   };
 

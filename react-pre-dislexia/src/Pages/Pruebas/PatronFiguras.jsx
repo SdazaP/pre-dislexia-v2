@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+// Asegúrate de que la ruta a useDiagnostico sea correcta
+import { useDiagnostico } from '../../context/context'; 
 
+// Define los datos de los ejercicios (usando estilos en línea)
 const ejercicios = [
   {
     id: 1,
@@ -241,53 +244,92 @@ const shuffleArray = (array) => {
 };
 
 export default function PatronFiguras() {
+  const { updateResultados } = useDiagnostico(); // Hook para guardar resultados
+
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [shuffledOptions, setShuffledOptions] = useState([]);
   const [droppedAnswer, setDroppedAnswer] = useState(null);
   const [canProceed, setCanProceed] = useState(false);
+  const [respuestas, setRespuestas] = useState(Array(ejercicios.length).fill(null)); // Array para guardar la respuesta seleccionada (estilos)
+  
   const navigate = useNavigate();
+  const startTimeRef = useRef(null); // Referencia para el inicio del tiempo
 
+  // Inicializar el tiempo al montar el componente
+  useEffect(() => {
+    startTimeRef.current = Date.now();
+  }, []);
+
+  // Lógica para manejar el cambio de ejercicio
   useEffect(() => {
     setShuffledOptions(shuffleArray(ejercicios[currentExerciseIndex].opciones));
     setDroppedAnswer(null);
     setCanProceed(false);
+
+    // Si ya existe una respuesta guardada, cárgala
+    if (respuestas[currentExerciseIndex]) {
+        setDroppedAnswer(respuestas[currentExerciseIndex]);
+        setCanProceed(true);
+    }
   }, [currentExerciseIndex]);
 
   const handleDragStart = (e, style) => {
+    // Convertimos el objeto de estilo a una cadena JSON para transferir todos los datos de estilo
     e.dataTransfer.setData("application/json", JSON.stringify(style));
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     const data = JSON.parse(e.dataTransfer.getData("application/json"));
+    
+    // Guarda la respuesta temporalmente en el estado local
     setDroppedAnswer(data);
     setCanProceed(true);
+
+    // Almacena la respuesta en el array de respuestas (el objeto de estilo completo)
+    setRespuestas(prevRespuestas => {
+        const newRespuestas = [...prevRespuestas];
+        newRespuestas[currentExerciseIndex] = data;
+        return newRespuestas;
+    });
   };
 
   const handleDragOver = (e) => {
     e.preventDefault();
   };
 
+  // Función central para avanzar y consolidar datos
   const handleNextExercise = () => {
-    if (droppedAnswer) {
-      const isCorrect =
-        JSON.stringify(droppedAnswer) ===
-        JSON.stringify(ejercicios[currentExerciseIndex].vacio);
-      console.log(
-        `Ejercicio ${ejercicios[currentExerciseIndex].id}: ${
-          isCorrect ? "Correcto" : "Incorrecto"
-        }`
-      );
+    if (!droppedAnswer) {
+      alert("Por favor, arrastra una figura al espacio vacío antes de continuar.");
+      return;
+    }
+    if (currentExerciseIndex === ejercicios.length - 1) {
+    
+        let aciertos = 0;
+        ejercicios.forEach((ejercicio, index) => {
+            const respuestaGuardada = JSON.stringify(respuestas[index]);
+            const respuestaCorrecta = JSON.stringify(ejercicio.vacio);
 
-      if (currentExerciseIndex === ejercicios.length - 1) {
-        navigate("/siguiente-prueba-url");
-      } else {
-        setCurrentExerciseIndex((prevIndex) => prevIndex + 1);
-      }
+            if (respuestaGuardada === respuestaCorrecta) {
+                aciertos++;
+            }
+        });
+        
+        // Calcular el tiempo total en segundos
+        const endTime = Date.now();
+        const tiempoTranscurrido = Math.round((endTime - startTimeRef.current) / 1000); // en segundos
+        
+        console.log(`Prueba 2 (Patrones) finalizada. Aciertos: ${aciertos}, Tiempo: ${tiempoTranscurrido}s`);
+        
+        // GUARDA RESULTADOS FINALES EN EL CONTEXTO
+        updateResultados('prueba2', { aciertos: aciertos, tiempo: tiempoTranscurrido });
+
+        navigate("/evaluacion/palabra-imagen"); 
+        
     } else {
-      alert(
-        "Por favor, arrastra una figura al espacio vacío antes de continuar."
-      );
+        // Pasa al siguiente ejercicio
+        setCurrentExerciseIndex((prevIndex) => prevIndex + 1);
     }
   };
 
@@ -309,7 +351,7 @@ export default function PatronFiguras() {
 
         <div className="border-t border-gray-200 pt-6">
           <h2 className="text-2xl font-bold text-blue-600 mb-6">
-            Ejercicio {currentExercise.id}
+            Ejercicio {currentExercise.id} de {ejercicios.length}
           </h2>
 
           <div className="flex flex-col items-center gap-6">
