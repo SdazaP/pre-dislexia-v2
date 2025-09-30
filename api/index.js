@@ -38,4 +38,8 @@ app.use("/api/contacto", contactoRoutes);
 
 //Ruta Instituciones
 const Institucion = require("./routes/Institucion")
-app.use('/api/instituciones', Institucion)
+app.use('/api/instituciones', Institucion);
+
+//Rutas Pruebas
+const Pruebas = require('./routes/Prueba');
+app.use('/api/pruebas/', Pruebas);
