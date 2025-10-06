@@ -18,7 +18,30 @@ app.listen(PORT || 9000,()=>{
 app.use(express.json());
 
 // Permite que la API pueda ser consumida por otro dominio
-app.use(cors());
+// Lista de orígenes permitidos
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://dislexia-kids.vercel.app'
+];
+
+const corsOptions = {
+  // Función para verificar si el origen de la solicitud existe
+  origin: (origin, callback) => {
+  
+    if (!origin) return callback(null, true); 
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true); // Origen permitido
+    } else {
+      callback(new Error('Not allowed by CORS')); 
+    }
+  },
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  credentials: true,
+  optionsSuccessStatus: 204
+};
+
+app.use(cors(corsOptions));
 
 //Base de datos
 // connect db
