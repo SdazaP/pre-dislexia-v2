@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Layout from "../Layouts/Layout";
+import {BASE_URL} from "../context/BASE_URL"
 
 export default function CatalogoInstituciones() {
   // Estado para almacenar las instituciones, el estado de carga y el estado de error
@@ -11,8 +12,8 @@ export default function CatalogoInstituciones() {
     // Función asíncrona para obtener los datos de la API
     const fetchInstituciones = async () => {
       try {
-        // Realiza la llamada GET a tu endpoint
-        const response = await fetch('http://localhost:3000/api/instituciones');
+        // Realiza la llamada GET
+        const response = await fetch(BASE_URL + '/api/instituciones');
         
         // Verifica si la respuesta es exitosa
         if (!response.ok) {

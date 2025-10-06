@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Layout from "../Layouts/Layout";
+import {BASE_URL} from "../context/BASE_URL"
 
 export default function Contacto() {
   const [formData, setFormData] = useState({
@@ -41,7 +42,7 @@ export default function Contacto() {
     };
 
     try {
-      const response = await fetch('http://localhost:3000/api/contacto', {
+      const response = await fetch(BASE_URL + '/api/contacto', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
