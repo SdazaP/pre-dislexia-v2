@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import Layout from "../../../Layouts/Layout";
 import html2canvas from "html2canvas-pro";
 import { jsPDF } from "jspdf";
+import {BASE_URL} from "../../../context/BASE_URL"
 
 // --- FUNCIONES DE LÓGICA DE PRESENTACIÓN ---
 
@@ -84,7 +85,7 @@ export default function ReporteDiagnostico() {
       try {
         
         const response = await fetch(
-          `http://localhost:3000/api/pruebas/${email}`
+          `${BASE_URL}/api/pruebas/${email}`
         );
 
         if (!response.ok) {

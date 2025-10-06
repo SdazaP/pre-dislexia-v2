@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
 
-const API_SUBMIT_URL = 'http://localhost:3000/api/pruebas/submit'; 
+import { BASE_URL } from './BASE_URL';
+
+const API_SUBMIT_URL = BASE_URL + "/api/pruebas/submit";
 const DiagnosticoContext = createContext();
 export const useDiagnostico = () => useContext(DiagnosticoContext);
 
@@ -39,7 +41,7 @@ export default function DiagnosticoProvider({ children }) {
   const submitDiagnostico = useCallback(async () => {
     // Verificación con useRef que es inmediata
     if (hasSubmittedRef.current) {
-      console.log("🚫 Diagnóstico ya fue enviado, evitando envío duplicado");
+      console.log("Diagnóstico ya fue enviado, evitando envío duplicado");
       return null;
     }
 
@@ -64,7 +66,7 @@ export default function DiagnosticoProvider({ children }) {
       tiempoTotal: tiempoTotal,
     };
 
-    console.log("📤 Enviando a la API:", finalPayload);
+    console.log("Enviando a la API:", finalPayload);
 
     try {
       const response = await fetch(API_SUBMIT_URL, {
@@ -83,7 +85,7 @@ export default function DiagnosticoProvider({ children }) {
         throw new Error(data.details || 'Error al guardar el diagnóstico en el servidor.');
       }
       
-      console.log("✅ Diagnóstico guardado:", data.diagnostico);
+      console.log("Diagnóstico guardado:", data.diagnostico);
       setIsSubmitting(false);
       return data.diagnostico;
       
