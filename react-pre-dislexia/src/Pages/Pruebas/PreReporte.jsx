@@ -52,7 +52,7 @@ export default function FinalizarEvaluacion() {
 
     const handleVerReporte = () => {
         if (emailReporte) {
-            navigate(`/reporte/${emailReporte}`); 
+            navigate(`/evaluacion/reporte/${emailReporte}`); 
         }
     };
 
